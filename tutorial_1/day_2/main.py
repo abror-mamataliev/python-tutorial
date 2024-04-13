@@ -6,7 +6,7 @@ from tkinter import (
 )
 
 root = Tk()
-root.title("Day 1")
+root.title("Day 2")
 root.resizable(False, False)
 
 frame = Frame(root)
@@ -21,16 +21,12 @@ buttons = [
 ]
 
 first, second, operator = None, None, None
-equal = False
 
 
 def on_click(text):
-    global first, second, operator, equal
+    global first, second, operator
     if text.isdigit():
         if operator is None:
-            if equal:
-                first, second, operator = None, None, None
-                equal = False
             first = int(str(first or 0) + text)
             output["text"] = str(first)
         else:
@@ -50,30 +46,21 @@ def on_click(text):
                 result = first / second if second != 0 else "Error"
             case _:
                 result = second
-        if result >= 1e9:
-            result = "Error"
         output["text"] = result
         if result == "Error":
             first, second, operator = None, None, None
         else:
             first, second, operator = result, None, None
-        equal = True
     elif text == "%" and first is not None:
-        result = first / 100
-        output["text"] = str(result)
-        first, second, operator = result, None, None
-        equal = True
-    elif text == "!" and first is not None and first >= 0 and isinstance(first, int):
+        output["text"] = str(first / 100)
+    elif text == "!" and first is not None:
         result = 1
         for i in range(1, first + 1):
             result *= i
         output["text"] = str(result)
-        first, second, operator = result, None, None
-        equal = True
     elif text == "AC":
         first, second, operator = None, None, None
         output["text"] = "0"
-        equal = False
 
 
 output = Label(
