@@ -31,12 +31,48 @@ def on_click(text):
             if equal:
                 first, second, operator = None, None, None
                 equal = False
-            first = int(str(first or 0) + text)
-            output["text"] = str(first)
+            first = str(first or 0) + text
+            first = float(first) if "." in first else int(first)
         else:
-            second = int(str(second or 0) + text)
+            second = str(second or 0) + text
+            second = float(second) if "." in second else int(second)
         output["text"] = str(first) if second is None else str(second)
+    elif text == "-/+":
+        if second is not None:
+            second = float("-" + str(second) if str(second)[0] != "-" else str(second)[1:])
+            output["text"] = str(second)
+        else:
+            first = float("-" + str(first) if str(first)[0] != "-" else str(first)[1:])
+            output["text"] = str(first)
+    elif text == ".":
+        if second is not None:
+            if "." not in str(second):
+                second = str(second) + "."
+                output["text"] = str(second)
+        else:
+            if "." not in str(first):
+                first = str(first) + "."
+                output["text"] = str(first)
     elif text in ["+", "-", "*", "/"]:
+        if second is not None:
+            match operator:
+                case "+":
+                    first += second
+                case "-":
+                    first -= second
+                case "*":
+                    first *= second
+                case "/":
+                    first /= second if second != 0 else "Error"
+                case _:
+                    first = second
+            if first >= 1e9:
+                first = "Error"
+            output["text"] = str(int(first)) if first == int(first) else str(first)
+            if first == "Error":
+                first, second, operator = None, None, None
+            else:
+                second = None
         operator = text
     elif text == "=" and first is not None and second is not None and operator is not None:
         match operator:
@@ -52,7 +88,7 @@ def on_click(text):
                 result = second
         if result >= 1e9:
             result = "Error"
-        output["text"] = result
+        output["text"] = result if result == "Error" else str(int(result)) if result == int(result) else str(result)
         if result == "Error":
             first, second, operator = None, None, None
         else:
@@ -67,6 +103,8 @@ def on_click(text):
         result = 1
         for i in range(1, first + 1):
             result *= i
+        if result >= 1e9:
+            result = "Error"
         output["text"] = str(result)
         first, second, operator = result, None, None
         equal = True
@@ -80,8 +118,8 @@ output = Label(
     frame,
     text="0",
     font=("Helvetica", 48),
-    anchor="se",
-    width=9,
+    anchor="e",
+    width=13,
     height=1
 )
 output.grid(row=0, columnspan=4)
