@@ -38,6 +38,7 @@ response = get(
         'appid': "e54abbee525c90e62c1587e6d90a6407"
     }
 )
+data = response.json()
 
 my_location_label = Label(frame, text="MY LOCATION", font=("Helvetica", 16, "bold"), anchor="n", pady=10)
 my_location_label.pack()
